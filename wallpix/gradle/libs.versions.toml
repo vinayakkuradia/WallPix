@@ -1,0 +1,20 @@
+[versions]
+# NOTE: Kotlin must match what Compose Multiplatform expects. Compose MP 1.12.2 is the
+# current stable line; if Gradle warns about a Kotlin/Compose mismatch, bump `kotlin`
+# (the compose compiler plugin below uses the same version automatically).
+kotlin = "2.3.0"
+compose = "1.12.2"
+coroutines = "1.10.2"
+serialization = "1.9.0"
+jna = "5.17.0"
+
+[libraries]
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
+
+[plugins]
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

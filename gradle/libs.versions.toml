@@ -1,0 +1,46 @@
+[versions]
+# Nucleus 2.5.x requires Kotlin 2.4.10+ and Compose Multiplatform 1.12.0 (it will not run on 1.11.x).
+kotlin = "2.4.10"
+compose = "1.12.0"
+nucleus = "2.5.18"
+# System tray ships from its own repository with its own version line.
+nucleus-tray = "2.1.0"
+# Native design systems (all published to Maven Central under dev.nucleusframework).
+macos-ui = "1.1.0"
+fluent = "1.1.2"
+yaru = "1.0.4"
+# The three toolkits above were built against coroutines 1.11.0.
+coroutines = "1.11.0"
+serialization = "1.9.0"
+jna = "5.17.0"
+
+[libraries]
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
+
+# Nucleus runtime (group dev.nucleusframework, artifacts are prefixed "nucleus.")
+nucleus-application = { module = "dev.nucleusframework:nucleus.nucleus-application", version.ref = "nucleus" }
+nucleus-decorated-window-tao = { module = "dev.nucleusframework:nucleus.decorated-window-tao", version.ref = "nucleus" }
+nucleus-darkmode-detector = { module = "dev.nucleusframework:nucleus.darkmode-detector", version.ref = "nucleus" }
+nucleus-system-color = { module = "dev.nucleusframework:nucleus.system-color", version.ref = "nucleus" }
+nucleus-notification-common = { module = "dev.nucleusframework:nucleus.notification-common", version.ref = "nucleus" }
+nucleus-notification-linux = { module = "dev.nucleusframework:nucleus.notification-linux", version.ref = "nucleus" }
+nucleus-notification-macos = { module = "dev.nucleusframework:nucleus.notification-macos", version.ref = "nucleus" }
+nucleus-notification-windows = { module = "dev.nucleusframework:nucleus.notification-windows", version.ref = "nucleus" }
+nucleus-tray = { module = "dev.nucleusframework:composenativetray", version.ref = "nucleus-tray" }
+
+# Per-OS design systems
+macos-ui = { module = "dev.nucleusframework:compose-macos-ui", version.ref = "macos-ui" }
+fluent = { module = "dev.nucleusframework.composefluent:fluent", version.ref = "fluent" }
+fluent-icons-extended = { module = "dev.nucleusframework.composefluent:fluent-icons-extended", version.ref = "fluent" }
+fluent-decorated-window = { module = "dev.nucleusframework.composefluent:decorated-window-fluent", version.ref = "fluent" }
+yaru = { module = "dev.nucleusframework.yarucompose:yaru", version.ref = "yaru" }
+yaru-decorated-window = { module = "dev.nucleusframework.yarucompose:yaru-decorated-window", version.ref = "yaru" }
+
+[plugins]
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+# Extends org.jetbrains.compose: adds nucleus.application { } packaging, the Tao window backend wiring and more.
+nucleus = { id = "dev.nucleusframework", version.ref = "nucleus" }
