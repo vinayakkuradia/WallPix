@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import app.wallpix.core.AppController
+import app.wallpix.logic.Wallpaper
 import app.wallpix.model.AppState
 import app.wallpix.model.FeedItem
 import app.wallpix.model.Settings
@@ -24,6 +25,16 @@ enum class WpPage(val id: String, val title: String) {
     SETTINGS("settings", "Settings"),
 }
 
+/** The full-screen viewer: the keys of the pictures it pages through, and which one is showing. */
+@Stable
+class ViewerState(val keys: List<String>, start: Int) {
+    var index by mutableStateOf(start.coerceIn(0, (keys.size - 1).coerceAtLeast(0)))
+
+    fun go(to: Int) {
+        index = to.coerceIn(0, (keys.size - 1).coerceAtLeast(0))
+    }
+}
+
 /** Everything the window needs besides the engine: which page is open and the latest message. */
 @Stable
 class WpUi(
@@ -36,6 +47,20 @@ class WpUi(
 
     /** Latest engine message ("New wallpaper: …", errors). Cleared by the banner after a while. */
     var message by mutableStateOf<String?>(null)
+
+    /** Non-null while the full-screen viewer is open. */
+    var viewer by mutableStateOf<ViewerState?>(null)
+
+    /** Opens the viewer on [key], paging through [items] (a page's pictures, in the order shown). */
+    fun openViewer(items: List<Wallpaper>, key: String) {
+        val keys = items.map { it.key }.distinct()
+        if (keys.isEmpty()) return
+        viewer = ViewerState(keys, keys.indexOf(key).coerceAtLeast(0))
+    }
+
+    fun closeViewer() {
+        viewer = null
+    }
 
     fun launch(block: suspend () -> Unit) {
         scope.launch { block() }

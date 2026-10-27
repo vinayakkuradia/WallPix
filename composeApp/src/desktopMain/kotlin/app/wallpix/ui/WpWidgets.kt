@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -140,11 +141,13 @@ fun WpSettingRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Column(Modifier.weight(1f).widthIn(min = 140.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             WpText(label, TextRole.Body)
             if (description != null) WpText(description, TextRole.Caption, color = p.textSecondary)
         }
-        control()
+        // Some toolkits' pop-up buttons and sliders fill whatever width they are offered. Capping the control keeps
+        // the label column wide enough to read, instead of squeezing it into a one-letter-wide strip.
+        Box(Modifier.widthIn(max = 340.dp), contentAlignment = Alignment.CenterEnd) { control() }
     }
 }
 

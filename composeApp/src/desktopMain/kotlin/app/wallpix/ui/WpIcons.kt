@@ -78,6 +78,9 @@ object WpIcons {
         "M15 3h6v6", "M10 14 21 3", "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6",
     )
 
+    /** "Full screen": two arrows pointing outwards. */
+    val Expand = icon("maximize", "M15 3h6v6", "M9 21H3v-6", "M21 3l-7 7", "M3 21l7-7")
+
     val ChevronLeft = icon("chevron-left", "M15 18l-6-6 6-6")
     val ChevronRight = icon("chevron-right", "M9 18l6-6-6-6")
     val Check = icon("check", "M20 6L9 17l-5-5")

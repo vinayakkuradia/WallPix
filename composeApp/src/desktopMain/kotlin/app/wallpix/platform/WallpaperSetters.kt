@@ -5,11 +5,13 @@ import app.wallpix.logic.Cmd
 import app.wallpix.logic.LinuxDe
 import app.wallpix.logic.LinuxWallpaper
 import app.wallpix.logic.MacWallpaper
+import app.wallpix.logic.SpaceTracker
 import com.sun.jna.Library
 import com.sun.jna.Native
 import com.sun.jna.win32.W32APIOptions
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.concurrent.thread
 
 object WallpaperSetters {
     fun forOs(os: Os = Os.current()): WallpaperSetter = when (os) {
@@ -44,11 +46,29 @@ class WindowsWallpaperSetter : WallpaperSetter {
 }
 
 /**
- * macOS: AppleScript via System Events, which sets every display's current desktop. The first use
- * triggers an "automation" permission prompt. Falls back to Finder.
+ * macOS: AppleScript via System Events, which sets every display's *current* Space. macOS offers no public way to
+ * reach Spaces that are not on screen, so a watcher notices when the user arrives on a Space that has not received the
+ * wallpaper yet and applies it there too. The first use triggers an "automation" permission prompt. Falls back to Finder.
  */
-class MacWallpaperSetter : WallpaperSetter {
+class MacWallpaperSetter(
+    private val activeSpace: () -> Long? = MacSpaces::activeSpace,
+    private val pollMs: Long = 1_500,
+) : WallpaperSetter {
+    private val tracker = SpaceTracker()
+    private val lock = Any()
+    @Volatile private var last: Path? = null
+    private var watcher: Thread? = null
+
     override fun set(path: Path): Result<Unit> = runCatching {
+        synchronized(lock) {
+            apply(path)
+            last = path
+            tracker.reset(activeSpace())
+        }
+        startWatcher()
+    }
+
+    private fun apply(path: Path) {
         val abs = path.toAbsolutePath().toString()
         val first = Proc.run(listOf("osascript", "-e", MacWallpaper.systemEventsScript(abs)), timeoutSec = 45)
         if (!first.ok) {
@@ -60,6 +80,48 @@ class MacWallpaperSetter : WallpaperSetter {
             }
         }
     }
+
+    @Synchronized
+    private fun startWatcher() {
+        if (watcher != null) return
+        watcher = thread(isDaemon = true, name = "wallpix-space-watch") {
+            while (true) {
+                try {
+                    Thread.sleep(pollMs)
+                    val path = last ?: continue
+                    if (!tracker.needsApply(activeSpace())) continue
+                    synchronized(lock) {
+                        // Mark first: a failing apply (no permission, say) must not be retried every poll.
+                        tracker.markApplied(activeSpace())
+                        if (last == path) runCatching { apply(path) }
+                    }
+                } catch (e: InterruptedException) {
+                    return@thread
+                } catch (e: Exception) {
+                    // Never let the watcher die over a bad poll.
+                }
+            }
+        }
+    }
+}
+
+/** The id of the Space on screen, through the long-stable (but private) CoreGraphics call. Null if unavailable. */
+object MacSpaces {
+    private interface Cgs : Library {
+        fun CGSMainConnectionID(): Int
+        fun CGSGetActiveSpace(connection: Int): Long
+    }
+
+    private val cgs: Cgs? by lazy {
+        runCatching {
+            Native.load("/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics", Cgs::class.java)
+        }.getOrNull()
+    }
+
+    fun activeSpace(): Long? = runCatching {
+        val api = cgs ?: return null
+        api.CGSGetActiveSpace(api.CGSMainConnectionID()).takeIf { it > 0 }
+    }.getOrNull()
 }
 
 /** Linux: GNOME-family, Cinnamon, MATE, KDE Plasma and XFCE. Wayland compositors such as sway are not covered. */

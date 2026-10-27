@@ -43,6 +43,7 @@ import app.wallpix.ui.WpPageHost
 import app.wallpix.ui.WpPalette
 import app.wallpix.ui.WpSnapshot
 import app.wallpix.ui.WpUi
+import app.wallpix.ui.WpViewerLayer
 import app.wallpix.ui.rememberSnapshot
 import dev.nucleusframework.application.NucleusApplicationScope
 import dev.nucleusframework.darkmodedetector.isSystemInDarkMode
@@ -283,7 +284,11 @@ fun NucleusApplicationScope.LinuxWindow(
                 LocalWpUi provides ui,
                 LocalWpSnapshot provides snapshot,
             ) {
-                LinuxShell(ui, snapshot, icon)
+                Box(Modifier.fillMaxSize()) {
+                    LinuxShell(ui, snapshot, icon)
+                    // Below the header-bar strip, so the window buttons stay reachable.
+                    WpViewerLayer(topReserve = YaruConstants.TitleBarHeight)
+                }
             }
         }
     }

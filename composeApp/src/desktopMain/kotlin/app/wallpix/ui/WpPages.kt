@@ -216,6 +216,16 @@ private fun Hero(w: Wallpaper) {
                 WpIconButton(WpIcons.ExternalLink, "Open on Peapix", { DesktopActions.openUrl(w.pageUrl, ui.os) })
             }
         }
+        // Top-right, like the card buttons: the picture you have on screen, full size, with the recent ones to flip to.
+        WpIconButton(
+            WpIcons.Expand,
+            "Full screen",
+            {
+                val latest = Browse.latest(snap.feed, snap.state.entries, snap.settings.recentsCount)
+                ui.openViewer(listOf(w) + latest.filter { it.key != w.key }, w.key)
+            },
+            Modifier.align(Alignment.TopEnd).padding(14.dp),
+        )
         FavouritePanel(w, panel, onDismiss = { panel = FavPanel.None }, modifier = Modifier.fillMaxSize())
     }
 }
@@ -233,6 +243,7 @@ private fun GridPage(
     belowHeader: (@Composable () -> Unit)? = null,
     empty: @Composable () -> Unit,
 ) {
+    val ui = LocalWpUi.current
     LazyVerticalGrid(
         columns = GridCells.Adaptive(250.dp),
         modifier = Modifier.fillMaxSize(),
@@ -247,7 +258,7 @@ private fun GridPage(
         if (items.isEmpty()) {
             item(span = { GridItemSpan(maxLineSpan) }) { empty() }
         } else {
-            items(items, key = { it.key }) { w -> WallpaperCard(w, showGroupMove) }
+            items(items, key = { it.key }) { w -> WallpaperCard(w, showGroupMove, onExpand = { ui.openViewer(items, w.key) }) }
         }
     }
 }

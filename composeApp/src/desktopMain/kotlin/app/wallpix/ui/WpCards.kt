@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -103,7 +104,7 @@ fun FavouritePanel(w: Wallpaper, panel: FavPanel, onDismiss: () -> Unit, modifie
 
 /** A wallpaper tile: picture with hover actions, then title and details. */
 @Composable
-fun WallpaperCard(w: Wallpaper, showGroupMove: Boolean, modifier: Modifier = Modifier) {
+fun WallpaperCard(w: Wallpaper, showGroupMove: Boolean, onExpand: () -> Unit, modifier: Modifier = Modifier) {
     val ui = LocalWpUi.current
     val snap = LocalWpSnapshot.current
     val p = LocalWpPalette.current
@@ -131,8 +132,23 @@ fun WallpaperCard(w: Wallpaper, showGroupMove: Boolean, modifier: Modifier = Mod
                     content = p.onAccent,
                 )
             }
-            if (w.favourite) {
-                WpBadge(WpIcons.HeartFilled, Color.White, Modifier.align(Alignment.TopEnd).padding(10.dp))
+            val showActions = hovered && panel == FavPanel.None
+            if (showActions) {
+                Box(
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .background(Brush.verticalGradient(listOf(Color.Black.copy(alpha = 0.45f), Color.Transparent))),
+                )
+            }
+            Row(
+                Modifier.align(Alignment.TopEnd).padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                if (w.favourite && !showActions) WpBadge(WpIcons.HeartFilled, Color.White)
+                if (showActions) WpIconButton(WpIcons.Expand, "Full screen", onExpand)
             }
 
             if (hovered && panel == FavPanel.None) {

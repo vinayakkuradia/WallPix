@@ -44,6 +44,7 @@ import app.wallpix.ui.WpPageHost
 import app.wallpix.ui.WpPalette
 import app.wallpix.ui.WpSnapshot
 import app.wallpix.ui.WpUi
+import app.wallpix.ui.WpViewerLayer
 import app.wallpix.ui.rememberSnapshot
 import dev.nucleusframework.application.NucleusApplicationScope
 import dev.nucleusframework.darkmodedetector.isSystemInDarkMode
@@ -283,6 +284,8 @@ private fun DecoratedWindowScope.WindowsChrome(ui: WpUi, icon: Painter?) {
             ) { padding ->
                 WindowsNavigation(ui, snapshot, topInset = padding.calculateTopPadding())
             }
+            // Below the caption bar, so the native caption buttons stay reachable.
+            WpViewerLayer(topReserve = CAPTION_HEIGHT)
         }
     }
 }

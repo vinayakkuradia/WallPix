@@ -527,6 +527,9 @@ class AppController(
     /** Ensures the 640 px thumbnail for [key] is on disk and returns it (null if unavailable). */
     suspend fun thumbFile(key: String, url: String): Path? = thumbs.ensure(key, url)
 
+    /** A 1920 px picture for the full-screen viewer, cached with the thumbnails. Null when unavailable. */
+    suspend fun previewFile(key: String, fullUrl: String): Path? = thumbs.ensurePreview(key, fullUrl)
+
     fun currentEntry(): LibraryEntry? = _state.value.currentKey?.let { k -> _state.value.entries.find { it.key == k } }
 
     // ---- internals ---------------------------------------------------------------------------

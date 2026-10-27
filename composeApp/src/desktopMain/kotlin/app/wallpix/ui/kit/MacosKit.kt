@@ -3,6 +3,8 @@ package app.wallpix.ui.kit
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -31,6 +33,7 @@ import app.wallpix.ui.WpPageHost
 import app.wallpix.ui.WpPalette
 import app.wallpix.ui.WpSnapshot
 import app.wallpix.ui.WpUi
+import app.wallpix.ui.WpViewerLayer
 import app.wallpix.ui.rememberSnapshot
 import dev.nucleusframework.application.NucleusApplicationScope
 import dev.nucleusframework.darkmodedetector.isSystemInDarkMode
@@ -207,11 +210,16 @@ fun NucleusApplicationScope.MacosWindow(
                 LocalWpUi provides ui,
                 LocalWpSnapshot provides snapshot,
             ) {
-                MacosShell(ui, snapshot)
+                Box(Modifier.fillMaxSize()) {
+                    MacosShell(ui, snapshot)
+                    WpViewerLayer()
+                }
             }
         }
     }
 }
+
+private val TRAFFIC_LIGHT_CLEARANCE = 44.dp
 
 private fun subtitleFor(page: WpPage, snap: WpSnapshot): String? = when (page) {
     WpPage.DOWNLOADED -> "${snap.downloadedCount} on disk"
@@ -231,7 +239,14 @@ private fun MacosShell(ui: WpUi, snap: WpSnapshot) {
         )
     }
     Scaffold(
-        sidebar = { Sidebar(items = items, activeItem = ui.page.id) },
+        sidebar = {
+            Sidebar(
+                items = items,
+                activeItem = ui.page.id,
+                // The traffic lights float over the sidebar's top-left corner: start the list below them.
+                header = { Spacer(Modifier.height(TRAFFIC_LIGHT_CLEARANCE)) },
+            )
+        },
         sidebarWidth = ColumnWidth.Fixed(224.dp),
         titleBar = {
             TitleBar(

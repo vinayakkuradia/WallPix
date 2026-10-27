@@ -12,6 +12,8 @@ controls and widgets are native to each OS. MIT licensed.
 - **Latest N** (default 10, maximum 30). Peapix only serves about a week at a time, so WallPix remembers what it has
   seen and tops the list up from its own history. The list grows with use.
 - **Browse** the live feed and your downloads as thumbnails. Full-size images are only fetched when you use them.
+- **Full-screen viewer:** the expand button on any picture opens it large, Picasa-style, with a filmstrip. ← → (or Space) page,
+  Home / End jump, Esc closes. Set wallpaper, favourite and Peapix link are available inside it.
 - **Favourites** are saved to a folder you choose (default `Downloads/WallPix`) and are never cleaned up. Sub-folders
   are **groups**. Un-favouriting moves the file to the Trash / Recycle Bin. WallPix never deletes anything permanently.
 - **Slideshow** of your favourites, with selectable groups, in order or shuffled, and an optional *even share per group*
@@ -57,7 +59,7 @@ Launch at login only works from an installed or packaged copy, not from `gradlew
 | OS | Wallpaper | Trash | Notes |
 |---|---|---|---|
 | Windows | `SystemParametersInfo` via JNA, Fill style, all monitors | Recycle Bin | Unsigned: SmartScreen will warn |
-| macOS | AppleScript through System Events (Finder as fallback) | Trash | First use asks for *Automation* permission. Sets each display's current Space. Unsigned: Gatekeeper will warn |
+| macOS | AppleScript through System Events (Finder as fallback) | Trash | First use asks for *Automation* permission. macOS only lets an app change the Space that is on screen, so WallPix sets every display's current Space and re-applies the wallpaper when you switch to a Space that has not received it yet (a short delay on first visit). Unsigned: Gatekeeper will warn |
 | Linux | GNOME, Cinnamon, MATE (`gsettings`), KDE Plasma (`plasma-apply-wallpaperimage`), XFCE (`xfconf-query`) | `gio trash`, `trash-put` or `kioclient5` | Other desktops fall back to the GNOME keys. Wayland compositors such as sway are not covered |
 
 The system tray on GNOME needs an AppIndicator extension. The window and tray do not use AWT (the Tao backend has none);

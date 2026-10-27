@@ -21,7 +21,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-private suspend fun decode(path: Path): ImageBitmap? = withContext(Dispatchers.IO) {
+internal suspend fun decode(path: Path): ImageBitmap? = withContext(Dispatchers.IO) {
     runCatching { Files.newInputStream(path).use { loadImageBitmap(it) } }.getOrNull()
 }
 
@@ -56,14 +56,19 @@ fun WpFullImage(localPath: String?, key: String, thumbUrl: String, title: String
 }
 
 @Composable
-private fun Picture(bitmap: ImageBitmap?, description: String, modifier: Modifier) {
+internal fun Picture(
+    bitmap: ImageBitmap?,
+    description: String,
+    modifier: Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
+) {
     val alpha by animateFloatAsState(if (bitmap != null) 1f else 0f, tween(260))
     Box(modifier, contentAlignment = Alignment.Center) {
         if (bitmap != null) {
             Image(
                 bitmap = bitmap,
                 contentDescription = description,
-                contentScale = ContentScale.Crop,
+                contentScale = contentScale,
                 modifier = Modifier.fillMaxSize().graphicsLayer { this.alpha = alpha },
             )
         }

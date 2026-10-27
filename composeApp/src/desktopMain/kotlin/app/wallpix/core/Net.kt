@@ -102,9 +102,15 @@ class ThumbStore(private val paths: AppPaths, private val fetcher: ImageFetcher)
 
     fun fileFor(key: String): Path = paths.thumbs.resolve("$key.jpg")
 
+    /** Larger (1920 px) copy used by the full-screen viewer for pictures that are not on disk yet. */
+    fun previewFileFor(key: String): Path = paths.thumbs.resolve("$key.preview.jpg")
+
+    suspend fun ensurePreview(key: String, url: String): Path? = fetchTo(previewFileFor(key), url)
+
     /** Returns the cached thumbnail, downloading it first if needed. Null when unavailable. */
-    suspend fun ensure(key: String, url: String): Path? {
-        val f = fileFor(key)
+    suspend fun ensure(key: String, url: String): Path? = fetchTo(fileFor(key), url)
+
+    private suspend fun fetchTo(f: Path, url: String): Path? {
         if (Files.exists(f)) return f
         if (url.isBlank()) return null
         return try {
@@ -119,6 +125,7 @@ class ThumbStore(private val paths: AppPaths, private val fetcher: ImageFetcher)
 
     fun delete(key: String) {
         runCatching { Files.deleteIfExists(fileFor(key)) }
+        runCatching { Files.deleteIfExists(previewFileFor(key)) }
     }
 
     /** Bounds the cache: thumbnails of keys not in [keep] are removed, oldest first, beyond [max] files. */
@@ -127,7 +134,7 @@ class ThumbStore(private val paths: AppPaths, private val fetcher: ImageFetcher)
             if (!Files.isDirectory(paths.thumbs)) return
             val files = Files.list(paths.thumbs).use { s -> s.filter { it.fileName.toString().endsWith(".jpg") }.toList() }
             if (files.size <= max) return
-            files.filter { it.fileName.toString().removeSuffix(".jpg") !in keep }
+            files.filter { it.fileName.toString().removeSuffix(".jpg").removeSuffix(".preview") !in keep }
                 .sortedBy { Files.getLastModifiedTime(it).toMillis() }
                 .take(files.size - max)
                 .forEach { Files.deleteIfExists(it) }
