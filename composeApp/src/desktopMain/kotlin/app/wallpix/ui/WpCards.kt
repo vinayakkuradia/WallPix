@@ -28,7 +28,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.wallpix.logic.Labels
 import app.wallpix.logic.Wallpaper
@@ -96,7 +95,6 @@ fun FavouritePanel(w: Wallpaper, panel: FavPanel, onDismiss: () -> Unit, modifie
                     }
                     WpButton("Cancel", onDismiss)
                 }
-                FavPanel.None -> Unit
             }
         }
     }

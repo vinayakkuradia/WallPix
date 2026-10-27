@@ -83,7 +83,6 @@ object WpIcons {
 
     val ChevronLeft = icon("chevron-left", "M15 18l-6-6 6-6")
     val ChevronRight = icon("chevron-right", "M9 18l6-6-6-6")
-    val Check = icon("check", "M20 6L9 17l-5-5")
     val Plus = icon("plus", "M5 12h14", "M12 5v14")
     val Close = icon("x", "M18 6L6 18", "M6 6l12 12")
 

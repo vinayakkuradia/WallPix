@@ -118,7 +118,7 @@ class ThumbStore(private val paths: AppPaths, private val fetcher: ImageFetcher)
             f
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

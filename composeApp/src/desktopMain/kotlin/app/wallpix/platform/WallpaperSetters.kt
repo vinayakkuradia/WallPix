@@ -95,9 +95,9 @@ class MacWallpaperSetter(
                         tracker.markApplied(activeSpace())
                         if (last == path) runCatching { apply(path) }
                     }
-                } catch (e: InterruptedException) {
+                } catch (_: InterruptedException) {
                     return@thread
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     // Never let the watcher die over a bad poll.
                 }
             }

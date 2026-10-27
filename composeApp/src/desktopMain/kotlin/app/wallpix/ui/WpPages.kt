@@ -390,7 +390,6 @@ private fun SettingsPage(padding: PaddingValues) {
     val ui = LocalWpUi.current
     val snap = LocalWpSnapshot.current
     val kit = LocalWpKit.current
-    val p = LocalWpPalette.current
     val s = snap.settings
     val controller = ui.controller
     fun update(change: (Settings) -> Settings) = ui.launch { controller.updateSettings(change) }

@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 // ---- thin wrappers: defaults live here, the kit supplies the native look ------------------------------------
 
@@ -202,7 +203,7 @@ fun WpStatusBanner(modifier: Modifier = Modifier) {
     val message = ui.message
     LaunchedEffect(message) {
         if (message != null) {
-            delay(9_000)
+            delay(9.seconds)
             if (ui.message == message) ui.message = null
         }
     }

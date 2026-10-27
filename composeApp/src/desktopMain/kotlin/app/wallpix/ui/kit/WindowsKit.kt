@@ -282,7 +282,7 @@ private fun DecoratedWindowScope.WindowsChrome(ui: WpUi, icon: Painter?) {
                 titleBarPlacement = TitleBarPlacement.Overlay(autoHideInFullscreen = false),
                 titleBar = { CaptionBar(ui, snapshot, icon) },
             ) { padding ->
-                WindowsNavigation(ui, snapshot, topInset = padding.calculateTopPadding())
+                WindowsNavigation(ui, topInset = padding.calculateTopPadding())
             }
             // Below the caption bar, so the native caption buttons stay reachable.
             WpViewerLayer(topReserve = CAPTION_HEIGHT)
@@ -327,7 +327,7 @@ private fun DecoratedWindowScope.CaptionBar(ui: WpUi, snap: WpSnapshot, icon: Pa
 }
 
 @Composable
-private fun WindowsNavigation(ui: WpUi, snap: WpSnapshot, topInset: androidx.compose.ui.unit.Dp) {
+private fun WindowsNavigation(ui: WpUi, topInset: androidx.compose.ui.unit.Dp) {
     val colors = FluentTheme.colors
     // The pane sits on Mica with Fluent's own translucent layer, like Settings and Photos.
     NavigationView(

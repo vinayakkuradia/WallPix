@@ -155,7 +155,7 @@ class AppController(
                     if (item.key == plan.applyKey) toApply = entry
                 } catch (e: CancellationException) {
                     throw e
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     failures++
                 }
             }
@@ -176,7 +176,7 @@ class AppController(
      */
     private suspend fun ingest(item: FeedItem, s: Settings, favouriteGroup: String?): LibraryEntry {
         val fav = favouriteGroup != null
-        val dir = if (fav) groupDir(favouriteGroup!!) else paths.recents
+        val dir = if (fav) groupDir(favouriteGroup) else paths.recents
         val dest = withContext(Dispatchers.IO) {
             Files.createDirectories(dir)
             uniqueTarget(dir, Naming.fileName(item.date ?: today(), item.title, item.key))
@@ -414,7 +414,7 @@ class AppController(
                     val t = uniqueTarget(dir, src.fileName.toString())
                     Files.move(src, t)
                     moved[e.key] = t.toString()
-                } catch (ex: Exception) {
+                } catch (_: Exception) {
                     failed++
                 }
             }
@@ -529,8 +529,6 @@ class AppController(
 
     /** A 1920 px picture for the full-screen viewer, cached with the thumbnails. Null when unavailable. */
     suspend fun previewFile(key: String, fullUrl: String): Path? = thumbs.ensurePreview(key, fullUrl)
-
-    fun currentEntry(): LibraryEntry? = _state.value.currentKey?.let { k -> _state.value.entries.find { it.key == k } }
 
     // ---- internals ---------------------------------------------------------------------------
 

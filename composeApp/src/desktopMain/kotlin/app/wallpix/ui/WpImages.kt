@@ -14,7 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
+import org.jetbrains.skia.Image as SkiaImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.nio.file.Files
@@ -22,7 +23,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 internal suspend fun decode(path: Path): ImageBitmap? = withContext(Dispatchers.IO) {
-    runCatching { Files.newInputStream(path).use { loadImageBitmap(it) } }.getOrNull()
+    runCatching { SkiaImage.makeFromEncoded(Files.readAllBytes(path)).toComposeImageBitmap() }.getOrNull()
 }
 
 /** The 640 px preview of an image. Browsing never loads full-size pictures. Fades in when ready. */
